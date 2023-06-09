@@ -9,7 +9,17 @@
   <ItemGroup>
     <PackageReference Include="LanguageExt.Core" Version="4.4.3" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     <PackageReference Include="Serilog" Version="2.12.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\NewFolder\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GetsBets.DataAccess.Contracts\GetsBets.DataAccess.Contracts.csproj" />
+    <ProjectReference Include="..\GetsBets.Models\GetsBets.Models.csproj" />
   </ItemGroup>
 
 </Project>

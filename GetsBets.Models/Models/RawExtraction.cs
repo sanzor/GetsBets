@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace GetsBets.Models
 {
-    public class Extraction
+    public class RawExtraction
     {
-
         [JsonPropertyName("data_extragere")]
         public DateOnly ExtractionDate { get; set; }
         [JsonPropertyName("ora_extragere")]

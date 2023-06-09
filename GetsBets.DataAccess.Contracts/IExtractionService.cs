@@ -6,6 +6,6 @@ namespace GetsBets.DataAccess.Contracts
 {
     public interface IExtractionService
     {
-        EitherAsync<Error, Unit> InsertExtractionAsync(Extraction extraction);
+        EitherAsync<Error, Unit> InsertExtractionsAsync(IEnumerable<Extraction> extractions);
     }
 }

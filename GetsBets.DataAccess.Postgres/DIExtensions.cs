@@ -12,7 +12,7 @@ namespace GetsBets.DataAccess.Postgres
 {
     public static class DIExtensions
     {
-        public static IServiceCollection AddDataAccess(IServiceCollection services,IConfiguration configuration)
+        public static IServiceCollection AddDataAccess(this IServiceCollection services,IConfiguration configuration)
         {
             services.RegisterDbConfiguration(configuration);
             services.AddSingleton<IExtractionService, ExtractionService>();

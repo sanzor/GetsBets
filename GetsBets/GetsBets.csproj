@@ -24,7 +24,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GetsBets.DataAccess.Common\GetsBets.DataAccess.Common.csproj" />
     <ProjectReference Include="..\GetsBets.DataAccess.Contracts\GetsBets.DataAccess.Contracts.csproj" />
+    <ProjectReference Include="..\GetsBets.DataAccess.Postgres\GetsBets.DataAccess.Postgres.csproj" />
+    <ProjectReference Include="..\GetsBets.Services\GetsBets.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Config\" />
   </ItemGroup>
 
 </Project>

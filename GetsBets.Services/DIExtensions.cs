@@ -10,7 +10,7 @@ namespace GetsBets.Services
 {
     public static class DIExtensions
     {
-        public static IServiceCollection AddGetsBetsServices(this IServiceCollection services,IConfiguration configuration)
+        public static IServiceCollection AddCoreServices(this IServiceCollection services,IConfiguration configuration)
         {
             var daemonConfiguration = ExtractionDaemonConfiguration.GetFromConfiguration(configuration);
             services.AddSingleton<IExtractionDaemonConfiguration>(daemonConfiguration);

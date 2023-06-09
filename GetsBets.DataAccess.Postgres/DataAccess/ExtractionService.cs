@@ -10,9 +10,9 @@ namespace GetsBets
       
         public IExtractionRepository _extractionRepositoryService { get; }
 
-        public EitherAsync<Error, Unit> InsertExtractionAsync(Extraction extraction)
+        public EitherAsync<Error, Unit> InsertExtractionsAsync(IEnumerable<Extraction> extractions)
         {
-            return this._extractionRepositoryService.InsertExtractionAsync(extraction);
+            return this._extractionRepositoryService.InsertExtractionsAsync(extractions);
         }
         public ExtractionService(IExtractionRepository extractionRepositoryService)
         {
