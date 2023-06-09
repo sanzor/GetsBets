@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LanguageExt.Core" Version="4.4.3" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
+    <PackageReference Include="Npgsql" Version="7.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GetsBets.DataAccess.Common\GetsBets.DataAccess.Common.csproj" />
+    <ProjectReference Include="..\GetsBets.DataAccess.Contracts\GetsBets.DataAccess.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>
