@@ -55,6 +55,7 @@ namespace GetsBets.DataAccess.Postgres
             var result = TryAsync(async () =>
             {
                 using var connection = databaseConnector.GetNpgSqlConnection();
+                await connection.OpenAsync();
                 using var command = new NpgsqlCommand(GET_EXTRACTIONS_FOR_DATE_PROCEDURE, connection);
                 command.CommandType = System.Data.CommandType.StoredProcedure;
               
@@ -102,6 +103,7 @@ namespace GetsBets.DataAccess.Postgres
             var result = TryAsync(async () =>
             {
                 using var connection = databaseConnector.GetNpgSqlConnection();
+                await connection.OpenAsync();
                 using var command = new NpgsqlCommand(GET_TOP_EXTRACTED_NUMBERS_FOR_DATE, connection);
                 command.CommandType = System.Data.CommandType.StoredProcedure;
 

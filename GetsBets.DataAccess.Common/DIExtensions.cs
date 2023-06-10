@@ -14,6 +14,7 @@ namespace GetsBets.DataAccess.Common
         {
             var databaseConfiguration=DatabaseConfiguration.GetFromConfiguration(configuration);
             services.AddSingleton<IDatabaseConfiguration>(databaseConfiguration);
+            services.AddSingleton<IDatabaseConnector, DatabaseConnector>();
             return services;
         }
     }

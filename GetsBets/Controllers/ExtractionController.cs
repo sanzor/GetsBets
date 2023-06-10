@@ -22,7 +22,7 @@ namespace GetsBets
         [Produces("application/json")]
         public async Task<IActionResult> GetExtractionsForDateAsync(GetExtractionsForDateDto dto)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 var modelErrrors = GetModelStateErrors(ModelState);
                 return BadRequest(modelErrrors);
@@ -49,7 +49,7 @@ namespace GetsBets
         [Produces("application/json")]
         public async Task<IActionResult> GetTopExtractedNumbersForDateAsync(GetTopExtractedNumbersDto dto)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 var modelErrrors = GetModelStateErrors(ModelState);
                 return BadRequest(modelErrrors);

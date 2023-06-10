@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GetsBets.Services
 {
-    internal class ISubscribeToExtractionService
+    public interface IExtractionEventPublisherService
     {
     }
 }

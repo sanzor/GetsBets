@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GetsBets.Services
 {
-    internal class CalculateTopNumbersService:ITopExtractedNumbersService
+    internal class TopExtractedNumbersService:ITopExtractedNumbersService
     {
         public Either<Error,GetTopExtractedNumbersResult> CalculateTopExtractedNumbers(CalculateTopExtractedNumbersParams @params)
         {

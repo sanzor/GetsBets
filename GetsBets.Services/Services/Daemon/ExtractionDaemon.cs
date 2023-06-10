@@ -5,7 +5,7 @@ namespace GetsBets.Services
 {
     public class ExtractionDaemon : IHostedService
     {
-        private readonly IExtractionDaemonService dailyWinnersDaemonService;
+        private readonly IExtractionDaemonService _dailyWinnersDaemonService;
         private readonly IExtractionDaemonConfiguration _configuration;
         private ILogger _logger = Log.ForContext<ExtractionDaemon>();
         private Timer _timer;
@@ -15,7 +15,7 @@ namespace GetsBets.Services
             var interval = GetRunInterval(_configuration)
                 .Map(ok =>
                 {
-                    _timer = new Timer(async (time) => await dailyWinnersDaemonService.InsertWinnersAsync(), null, TimeSpan.Zero, ok);
+                    _timer = new Timer(async (time) => await _dailyWinnersDaemonService.InsertWinnersAsync(), null, TimeSpan.Zero, ok);
                     return ok;
                 })
                 .MapLeft(err =>
@@ -32,9 +32,10 @@ namespace GetsBets.Services
             _timer?.Change(Timeout.Infinite, 0);
             return Task.CompletedTask;
         }
-        public ExtractionDaemon(IExtractionDaemonConfiguration configuration)
+        public ExtractionDaemon(IExtractionDaemonConfiguration configuration, IExtractionDaemonService dailyWinnersDaemonService)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _dailyWinnersDaemonService = dailyWinnersDaemonService ?? throw new ArgumentNullException(nameof(dailyWinnersDaemonService));
         }
         private Either<Error,TimeSpan> GetRunInterval(IExtractionDaemonConfiguration configuration)
         {

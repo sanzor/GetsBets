@@ -1,4 +1,5 @@
 ﻿using GetsBets.DataAccess.Contracts;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace GetsBets.Services
         private readonly IFetchExtractionService _fetchExtractionService;
         private readonly IExtractionAdapter _extractionAdapter;
         private readonly IExtractionDataService _extractionService;
+        private readonly ILogger _logger = Log.ForContext<ExtractionDaemonService>();
         public EitherAsync<Error, Unit> InsertWinnersAsync()
         {
             var result= _fetchExtractionService
@@ -24,7 +26,12 @@ namespace GetsBets.Services
                      return extractions;
                  })
                  .Bind(_extractionService.InsertExtractionsAsync)
-                 .Map(ok=>Unit.Default);
+                 .Map(ok=>Unit.Default)
+                 .MapLeft(err =>
+                 {
+                     _logger.Error($"Error in Daemon Service : {err.Message}");
+                     return err;
+                 });
             return result;
                 
                
