@@ -5,6 +5,7 @@ using LanguageExt;
 using LanguageExt.Common;
 using Microsoft.Extensions.Options;
 using Npgsql;
+using NpgsqlTypes;
 using System.Data;
 
 namespace GetsBets.DataAccess.Postgres
@@ -65,8 +66,6 @@ namespace GetsBets.DataAccess.Postgres
                     NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Date,
                     Value = date
                 };
-
-
                 var reader=await command.ExecuteReaderAsync();
                 var extractions = await AddExtractionsAsync(reader);
                 return extractions;
@@ -83,7 +82,7 @@ namespace GetsBets.DataAccess.Postgres
             }
             return extractions;
         }
-        
+
         private Extraction ToExtraction(NpgsqlDataReader reader)
         {
             var date = (DateOnly)reader["data_extragere"];
@@ -107,27 +106,9 @@ namespace GetsBets.DataAccess.Postgres
                 using var command = new NpgsqlCommand(GET_TOP_EXTRACTED_NUMBERS_FOR_DATE, connection);
                 command.CommandType = System.Data.CommandType.StoredProcedure;
 
-                var dateParameter = new NpgsqlParameter
-                {
-                    ParameterName = "@date",
-                    NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Date,
-                    Value = topExtractedParams.Date
-                };
-                command.Parameters.Add(dateParameter);
-                var topMostExtractedNumbersCountParameter = new NpgsqlParameter
-                {
-                    ParameterName = "@topMostExtractedNumbersCount",
-                    NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Integer,
-                    Value = topExtractedParams.TopMostExtractedNumbersCount
-                };
-                command.Parameters.Add(topMostExtractedNumbersCountParameter);
-                var topLeastExtractedNumbersCountParameter = new NpgsqlParameter
-                {
-                    ParameterName = "@topLeastExtractedNumbersCount",
-                    NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Integer,
-                    Value = topExtractedParams.TopLeastExtractedNumbersCount
-                };
-                command.Parameters.Add(topLeastExtractedNumbersCountParameter);
+                command.Parameters.AddWithValue("@top_count", NpgsqlDbType.Integer, topExtractedParams.TopMostExtractedNumbersCount);
+                command.Parameters.AddWithValue("@least_count", NpgsqlDbType.Integer, topExtractedParams.TopLeastExtractedNumbersCount); ;
+                command.Parameters.AddWithValue("@date", NpgsqlDbType.Date, topExtractedParams.Date);
 
                 var reader = await command.ExecuteReaderAsync();
 
@@ -139,7 +120,7 @@ namespace GetsBets.DataAccess.Postgres
             }).ToEither();
             return result ;
         }
-
+        
         public ExtractionRepository(IDatabaseConnector databaseConnector)
         {
             this.databaseConnector = databaseConnector ?? throw new ArgumentNullException(nameof(databaseConnector));
