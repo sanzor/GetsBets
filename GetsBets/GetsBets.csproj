@@ -30,8 +30,4 @@
     <ProjectReference Include="..\GetsBets.Services\GetsBets.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Config\" />
-  </ItemGroup>
-
 </Project>

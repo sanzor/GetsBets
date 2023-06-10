@@ -9,7 +9,9 @@ namespace GetsBets.DataAccess.Contracts
     {
         EitherAsync<Error, Unit> InsertExtractionsAsync(List<Extraction> extraction);
 
-        EitherAsync<Error, IEnumerable<Extraction>> GetExtractionsForDateAsync(DateTime dateTime);
+        EitherAsync<Error, IEnumerable<Extraction>> GetExtractionsWithDateFilterAsync(DateOnly date);
+
+        EitherAsync<Error, GetTopExtractedNumbersResult> GetTopExtractedNumbersForDateAsync(GetTopExtractedNumbersParams topExtractedParams);
 
     }
 }

@@ -11,7 +11,7 @@ namespace GetsBets.Services
     {
         private readonly IFetchExtractionService _fetchExtractionService;
         private readonly IExtractionAdapter _extractionAdapter;
-        private readonly IExtractionService _extractionService;
+        private readonly IExtractionDataService _extractionService;
         public EitherAsync<Error, Unit> InsertWinnersAsync()
         {
             var result= _fetchExtractionService
@@ -35,7 +35,7 @@ namespace GetsBets.Services
         }
         public ExtractionDaemonService(IFetchExtractionService fetchExtractionService,
             IExtractionAdapter adapter,
-            IExtractionService extractionService)
+            IExtractionDataService extractionService)
         {
             this._extractionAdapter = adapter;
             this._fetchExtractionService = fetchExtractionService;

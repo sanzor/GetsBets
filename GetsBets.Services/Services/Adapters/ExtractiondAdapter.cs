@@ -9,6 +9,21 @@ namespace GetsBets.Services
 {
     public class ExtractiondAdapter : IExtractionAdapter
     {
+        public Either<Error, List<AggregatedExtraction>> ParseAggregatedExtractions(IEnumerable<Extraction> extractions)
+        {
+            var result = Try(() =>
+            {
+                List<AggregatedExtraction> ls = new List<AggregatedExtraction>();
+                foreach (var rawExtraction in extractions)
+                {
+                    var extraction = ParseExtraction(rawExtraction);
+                    ls.Add(extraction);
+                }
+                return ls;
+            }).ToEither(exc => Error.New(exc));
+            return result;
+        }
+
         public Either<Error, List<Extraction>> ParseExtractions(IEnumerable<RawExtraction> extractions)
         {
             var result = Try(() =>
@@ -25,6 +40,16 @@ namespace GetsBets.Services
         }
         private Extraction ParseExtraction(RawExtraction extraction)
         {
+            return new Extraction
+            {
+                ExtractionDate = extraction.ExtractionDate,
+                ExtractionTime = extraction.ExtractionTime,
+                Bonus = extraction.Bonus,
+                Numbers = extraction.Numbers,
+            };
+        }
+        private AggregatedExtraction ParseExtraction(Extraction extraction)
+        {
             int year = extraction.ExtractionDate.Year;
             int month = extraction.ExtractionDate.Month;
             int day = extraction.ExtractionDate.Day;
@@ -32,8 +57,9 @@ namespace GetsBets.Services
             int minute = extraction.ExtractionTime.Minute;
             int second = extraction.ExtractionTime.Second;
             int milisecond = extraction.ExtractionTime.Millisecond;
-            return new Extraction
+            return new AggregatedExtraction
             {
+                Numbers=extraction.Numbers,
                 ExtractionTime = new DateTime(year, month, day, hour, minute, second, milisecond)
             };
         }

@@ -15,7 +15,7 @@ namespace GetsBets.DataAccess.Postgres
         public static IServiceCollection AddDataAccess(this IServiceCollection services,IConfiguration configuration)
         {
             services.RegisterDbConfiguration(configuration);
-            services.AddSingleton<IExtractionService, ExtractionService>();
+            services.AddSingleton<IExtractionDataService, ExtractionDataService>();
             services.AddSingleton<IExtractionRepository, ExtractionRepository>();
             return services;
         }

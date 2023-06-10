@@ -9,7 +9,8 @@ namespace GetsBets.Models
 {
     public class Extraction
     {
-
+        [JsonPropertyName("id")]
+        public long Id { get; set; }
         [JsonPropertyName("data_extragere")]
         public DateOnly ExtractionDate { get; set; }
         [JsonPropertyName("ora_extragere")]

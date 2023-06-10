@@ -1,43 +1,88 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GetsBets.Models;
+using GetsBets.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace GetsBets
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ExtractionController : ControllerBase
     {
+        
+
+        public IExtractionService _extractionService { get; }
+
         // GET: api/<ValuesController1>
         [HttpGet]
-        public IEnumerable<string> Get()
+        [Route("/extractions/get-extractions-for-date")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public async Task<IActionResult> GetExtractionsForDateAsync(GetExtractionsForDateDto dto)
         {
-            return new string[] { "value1", "value2" };
+            if (ModelState.IsValid)
+            {
+                var modelErrrors = GetModelStateErrors(ModelState);
+                return BadRequest(modelErrrors);
+            }
+            var  result = await Adapter
+                .Adapt(dto)
+                .ToAsync()
+            
+            .Bind(_extractionService.GetExtractionsForDateAsync)
+            .Match(ok =>
+            {
+                return StatusCode(200, ok);
+            }, err =>
+            {
+                return StatusCode(500, err.Message);
+            });
+            return result;
+            
         }
 
-        // GET api/<ValuesController1>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet]
+        [Route("/extractions/get-top-extracted-numbers-for-date")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public async Task<IActionResult> GetTopExtractedNumbersForDateAsync(GetTopExtractedNumbersDto dto)
         {
-            return "value";
-        }
+            if (ModelState.IsValid)
+            {
+                var modelErrrors = GetModelStateErrors(ModelState);
+                return BadRequest(modelErrrors);
+            }
+            var result = await Adapter
+                .Adapt(dto)
+                .ToAsync()
 
-        // POST api/<ValuesController1>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
+            .Bind(_extractionService.GetTopExtractedNumbersForDateAsync)
+            .Match(ok =>
+            {
+                return StatusCode(200, ok);
+            }, err =>
+            {
+                return StatusCode(500, err.Message);
+            });
+            return result;
 
-        // PUT api/<ValuesController1>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
         }
-
-        // DELETE api/<ValuesController1>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        private static string GetModelStateErrors(ModelStateDictionary modelState)
         {
+            var errorList = modelState
+                .Keys
+                .SelectMany(key => modelState[key].Errors)
+                .Select(error => error.Exception != null ? error.Exception.Message : error.ErrorMessage)
+                .ToList();
+            return string.Join(Environment.NewLine, errorList);
+        }
+        
+
+        public ExtractionController(IExtractionService extractionService)
+        {
+            _extractionService = extractionService??throw new ArgumentNullException(nameof(extractionService));
         }
     }
 }

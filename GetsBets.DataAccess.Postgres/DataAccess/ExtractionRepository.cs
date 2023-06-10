@@ -15,6 +15,7 @@ namespace GetsBets.DataAccess.Postgres
         public readonly IDatabaseConnector databaseConnector;
         private const string INSERT_PROCEDURE = "insert";
         private const string GET_EXTRACTIONS_FOR_DATE_PROCEDURE = "get_extractions_for_date";
+        private const string GET_TOP_EXTRACTED_NUMBERS_FOR_DATE = "get_top_extracted_numbers_for_date";
 
         public EitherAsync<Error, Unit> InsertExtractionsAsync(List<Extraction> extractions)
         {
@@ -49,7 +50,7 @@ namespace GetsBets.DataAccess.Postgres
             return dt;
         }
 
-        public EitherAsync<Error, IEnumerable<Extraction>> GetExtractionsForDateAsync(DateTime dateTime)
+        public EitherAsync<Error, IEnumerable<Extraction>> GetExtractionsWithDateFilterAsync(DateOnly date)
         {
             var result = TryAsync(async () =>
             {
@@ -61,7 +62,7 @@ namespace GetsBets.DataAccess.Postgres
                 {
                     ParameterName = "@filter",
                     NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Date,
-                    Value = dateTime
+                    Value = date
                 };
 
 
@@ -81,6 +82,7 @@ namespace GetsBets.DataAccess.Postgres
             }
             return extractions;
         }
+        
         private Extraction ToExtraction(NpgsqlDataReader reader)
         {
             var date = (DateOnly)reader["data_extragere"];
@@ -95,6 +97,47 @@ namespace GetsBets.DataAccess.Postgres
                 Bonus = bonus
             };
         }
+        public EitherAsync<Error, GetTopExtractedNumbersResult> GetTopExtractedNumbersForDateAsync(GetTopExtractedNumbersParams topExtractedParams)
+        {
+            var result = TryAsync(async () =>
+            {
+                using var connection = databaseConnector.GetNpgSqlConnection();
+                using var command = new NpgsqlCommand(GET_TOP_EXTRACTED_NUMBERS_FOR_DATE, connection);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                var dateParameter = new NpgsqlParameter
+                {
+                    ParameterName = "@date",
+                    NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Date,
+                    Value = topExtractedParams.Date
+                };
+                command.Parameters.Add(dateParameter);
+                var topMostExtractedNumbersCountParameter = new NpgsqlParameter
+                {
+                    ParameterName = "@topMostExtractedNumbersCount",
+                    NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Integer,
+                    Value = topExtractedParams.TopMostExtractedNumbersCount
+                };
+                command.Parameters.Add(topMostExtractedNumbersCountParameter);
+                var topLeastExtractedNumbersCountParameter = new NpgsqlParameter
+                {
+                    ParameterName = "@topLeastExtractedNumbersCount",
+                    NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Integer,
+                    Value = topExtractedParams.TopLeastExtractedNumbersCount
+                };
+                command.Parameters.Add(topLeastExtractedNumbersCountParameter);
+
+                var reader = await command.ExecuteReaderAsync();
+
+
+                return new GetTopExtractedNumbersResult
+                {
+
+                };
+            }).ToEither();
+            return result ;
+        }
+
         public ExtractionRepository(IDatabaseConnector databaseConnector)
         {
             this.databaseConnector = databaseConnector ?? throw new ArgumentNullException(nameof(databaseConnector));
