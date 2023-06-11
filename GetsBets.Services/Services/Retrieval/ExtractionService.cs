@@ -13,6 +13,7 @@ namespace GetsBets.Services
         private readonly IExtractionAdapter _extractionAdapter;
         private readonly IExtractionDataService extractionService;
         private readonly ITopExtractedNumbersService _topExtractedNumbersService;
+        private readonly IExtractionDaemonService _extractionDaemonService;
 
         public EitherAsync<Error, List<AggregatedExtraction>> GetExtractionsForDateAsync(GetExtractionsForDateParams getExtractionParams)
         {
@@ -49,11 +50,19 @@ namespace GetsBets.Services
             return rez;
 
         }
+
+        public EitherAsync<Error, Unit> TriggerExtractionAsync()
+        {
+            return _extractionDaemonService.InsertWinnersAsync();
+        }
+
         public ExtractionService(
             IExtractionAdapter extractionAdapter,
             IExtractionDataService extractionService,
-            ITopExtractedNumbersService topExtractedNumbersService)
+            ITopExtractedNumbersService topExtractedNumbersService,
+            IExtractionDaemonService daemonService)
         {
+            _extractionDaemonService = daemonService ?? throw new ArgumentNullException(nameof(daemonService));
             this._extractionAdapter = extractionAdapter ?? throw new ArgumentNullException(nameof(extractionAdapter));
             this.extractionService = extractionService ?? throw new ArgumentNullException(nameof(extractionService));
             _topExtractedNumbersService = topExtractedNumbersService ?? throw new ArgumentNullException(nameof(topExtractedNumbersService));

@@ -10,17 +10,17 @@ using System.Threading.Tasks;
 
 namespace GetsBets.Services
 {
-    public class ExtractionSubscriber : IExtractionSubscriber<SubscriptionEvent>
+    public class ExtractionSubscriber : IExtractionSubscriber<ExtractionEvent>
     {
         private readonly IConnectionMultiplexer _mux;
         private readonly string _redisSubscriptionChannel;
-        public EitherAsync<Error, Unit> SubscribeAsync(Func<SubscriptionEvent, Task> onMessage)
+        public EitherAsync<Error, Unit> SubscribeAsync(Func<ExtractionEvent, Task> onMessage)
         {
             var subResult = TryAsync(async () =>
             {
                 async void Handler(RedisChannel channel, RedisValue value)
                 {
-                    var subscriptionEvent = JsonSerializer.Deserialize<SubscriptionEvent>(value);
+                    var subscriptionEvent = JsonSerializer.Deserialize<ExtractionEvent>(value);
                     var task = onMessage(subscriptionEvent);
                     await task;
                 }

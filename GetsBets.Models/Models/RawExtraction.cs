@@ -5,11 +5,11 @@ namespace GetsBets.Models
     public class RawExtraction
     {
         [JsonPropertyName("data_extragere")]
-        public DateOnly ExtractionDate { get; set; }
+        public string Data_Extragere { get; set; }
         [JsonPropertyName("ora_extragere")]
-        public TimeOnly ExtractionTime { get; set; }
+        public string Ora_Extragere { get; set; }
         [JsonPropertyName("numere")]
-        public string Numbers { get; set; }
+        public string Numere { get; set; }
         [JsonPropertyName("bonus")]
         public string Bonus { get; set; }
     }

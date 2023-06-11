@@ -4,6 +4,6 @@ namespace GetsBets.Services
 {
     public interface IFetchExtractionService
     {
-        EitherAsync<Error, List<RawExtraction>> FetchExtractionsService();
+        EitherAsync<Error, List<RawExtraction>> GetExtractionFromSourceAsync();
     }
 }

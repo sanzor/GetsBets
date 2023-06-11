@@ -8,7 +8,7 @@ namespace GetsBets.Models
 {
     public class AggregatedExtraction
     {
-        public DateTime ExtractionTime { get; set; }
+        public string Date { get; set; }
         public string Numbers { get; set; }
     }
 }

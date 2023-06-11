@@ -9,6 +9,7 @@ namespace GetsBets.Services
 {
     public interface IExtractionService
     {
+        EitherAsync<Error, Unit> TriggerExtractionAsync();
         EitherAsync<Error, List<AggregatedExtraction>> GetExtractionsForDateAsync(GetExtractionsForDateParams getExtractionsForDateParams);
         EitherAsync<Error, GetTopExtractedNumbersResult> GetTopExtractedNumbersForDateAsync(GetTopExtractedNumbersParams getTopExtractedNumbersForDateParams);
     }

@@ -2,6 +2,7 @@
 using GetsBets.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Serilog;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -11,6 +12,23 @@ namespace GetsBets
     [ApiController]
     public class ExtractionController : ControllerBase
     {
+        private Serilog.ILogger _logger = Log.ForContext<ExtractionController>();
+        [HttpPut]
+        [Route("/extractions/trigger-extraction")]
+        public async Task<IActionResult> TriggerExtractionAsync()
+        {
+            var rez=await _extractionService.TriggerExtractionAsync()
+                .Match(ok =>
+                {
+                    _logger.Information("Manual extraction from source successful");
+                    return StatusCode(200, "manual extraction succesful");
+                }, err =>
+                {
+                    _logger.Error($"Failed manual extraction from source with error:{err.Message}");
+                    return StatusCode(500, $"Manual extraction failed with reason {err.Message}");
+                });
+            return rez;
+        }
         
 
         public IExtractionService _extractionService { get; }
@@ -42,6 +60,8 @@ namespace GetsBets
             return result;
             
         }
+
+       
 
         [HttpGet]
         [Route("/extractions/get-top-extracted-numbers-for-date")]

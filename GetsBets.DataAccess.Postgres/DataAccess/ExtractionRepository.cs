@@ -3,6 +3,7 @@ using GetsBets.DataAccess.Contracts;
 using GetsBets.Models;
 using LanguageExt;
 using LanguageExt.Common;
+using LanguageExt.UnitsOfMeasure;
 using Microsoft.Extensions.Options;
 using Npgsql;
 using NpgsqlTypes;
@@ -10,7 +11,7 @@ using System.Data;
 
 namespace GetsBets.DataAccess.Postgres
 {
-    
+
     public class ExtractionRepository : IExtractionRepository
     {
         public readonly IDatabaseConnector databaseConnector;
@@ -20,19 +21,23 @@ namespace GetsBets.DataAccess.Postgres
 
         public EitherAsync<Error, Unit> InsertExtractionsAsync(List<Extraction> extractions)
         {
-            var result=TryAsync(async () =>
+            var result = TryAsync(async () =>
             {
-                using var connection = databaseConnector.GetNpgSqlConnection();
+
+                using NpgsqlConnection connection = databaseConnector.GetNpgSqlConnection();
+                await connection.OpenAsync();
+                using var writer = await connection.BeginBinaryImportAsync("COPY public.extragere (data_extragere,ora_extragere,numere,bonus) FROM STDIN (FORMAT BINARY)");
                 using var command = new NpgsqlCommand(INSERT_PROCEDURE, connection);
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-                var table = CreateDataTable(extractions);
-                var parameter = new NpgsqlParameter
+                command.CommandType = CommandType.StoredProcedure;
+                foreach (var item in extractions)
                 {
-                    ParameterName = "@extractions",
-                    NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Array,
-                    Value = table
-                };
-                await command.ExecuteNonQueryAsync();
+                    await writer.StartRowAsync();
+                    await writer.WriteAsync(item.ExtractionDate, NpgsqlDbType.Date);
+                    await writer.WriteAsync(item.ExtractionTime, NpgsqlDbType.Time);
+                    await writer.WriteAsync(item.Numbers, NpgsqlDbType.Text);
+                    await writer.WriteAsync(item.Bonus, NpgsqlDbType.Text);
+                }
+                await writer.CompleteAsync();
                 return Unit.Default;
             }).ToEither();
             return result;
@@ -44,7 +49,7 @@ namespace GetsBets.DataAccess.Postgres
             dt.Columns.Add("ora_extragere", typeof(TimeOnly));
             dt.Columns.Add("numere", typeof(string));
             dt.Columns.Add("bonus", typeof(string));
-            foreach(var extraction in extractions)
+            foreach (var extraction in extractions)
             {
                 dt.Rows.Add(extraction.ExtractionDate, extraction.ExtractionTime, extraction.Numbers, extraction.Bonus);
             }
@@ -55,18 +60,11 @@ namespace GetsBets.DataAccess.Postgres
         {
             var result = TryAsync(async () =>
             {
-                using var connection = databaseConnector.GetNpgSqlConnection();
-                await connection.OpenAsync();
-                using var command = new NpgsqlCommand(GET_EXTRACTIONS_FOR_DATE_PROCEDURE, connection);
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-              
-                var parameter = new NpgsqlParameter
-                {
-                    ParameterName = "@filter",
-                    NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Date,
-                    Value = date
-                };
-                var reader=await command.ExecuteReaderAsync();
+            using var connection = databaseConnector.GetNpgSqlConnection();
+            await connection.OpenAsync();
+            using var command = new NpgsqlCommand("SELECT * FROM public.extragere WHERE data_extragere = @date;", connection);
+                command.Parameters.AddWithValue("@date", NpgsqlDbType.Date, date);
+                var reader = await command.ExecuteReaderAsync();
                 var extractions = await AddExtractionsAsync(reader);
                 return extractions;
             }).ToEither();
@@ -74,10 +72,10 @@ namespace GetsBets.DataAccess.Postgres
         }
         private async Task<IEnumerable<Extraction>> AddExtractionsAsync(NpgsqlDataReader reader)
         {
-            List<Extraction> extractions=new List<Extraction>();
+            List<Extraction> extractions = new List<Extraction>();
             while (await reader.ReadAsync())
             {
-                var extraction =  ToExtraction(reader);
+                var extraction = ToExtraction(reader);
                 extractions.Add(extraction);
             }
             return extractions;
@@ -85,14 +83,15 @@ namespace GetsBets.DataAccess.Postgres
 
         private Extraction ToExtraction(NpgsqlDataReader reader)
         {
-            var date = (DateOnly)reader["data_extragere"];
-            var time = (TimeOnly)reader["ora_extragere"];
+
+            var date = (DateTime)reader["data_extragere"];
+            var time = (TimeSpan)reader["ora_extragere"];
             var numbers = (string)reader["numere"];
             var bonus = (string)reader["bonus"];
             return new Extraction
             {
-                ExtractionDate = date,
-                ExtractionTime = time,
+                ExtractionDate = new DateOnly(date.Year,date.Month,date.Day),
+                ExtractionTime = new TimeOnly(time.Hours,time.Minutes,time.Seconds,time.Milliseconds),
                 Numbers = numbers,
                 Bonus = bonus
             };
@@ -118,9 +117,9 @@ namespace GetsBets.DataAccess.Postgres
 
                 };
             }).ToEither();
-            return result ;
+            return result;
         }
-        
+
         public ExtractionRepository(IDatabaseConnector databaseConnector)
         {
             this.databaseConnector = databaseConnector ?? throw new ArgumentNullException(nameof(databaseConnector));

@@ -17,7 +17,7 @@ namespace GetsBets.Services
         public EitherAsync<Error, Unit> InsertWinnersAsync()
         {
             var result= _fetchExtractionService
-                 .FetchExtractionsService()
+                 .GetExtractionFromSourceAsync()
                  .Bind(rawExtractions =>
                  {
                      var extractions = _extractionAdapter

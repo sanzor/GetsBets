@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace GetsBets.Models
 {
-    public class SubscriptionEvent
+    public class ExtractionEvent
     {
-       
+       public Extraction Extraction { get; set; }
     }
 }

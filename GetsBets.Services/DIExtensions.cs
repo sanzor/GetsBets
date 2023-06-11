@@ -15,8 +15,9 @@ namespace GetsBets.Services
         public static IServiceCollection AddCoreServices(this IServiceCollection services,IConfiguration configuration)
         {
             services.AddExtractionDaemonServices(configuration);
+            services.AddExtractionClientServices(configuration);
             services.AddSingleton<IExtractionService, ExtractionService>();
-            services.AddSingleton<IExtractionSubscriber<SubscriptionEvent>, ExtractionSubscriber>();
+            services.AddSingleton<IExtractionSubscriber<ExtractionEvent>, ExtractionSubscriber>();
             services.AddSingleton<ITopExtractedNumbersService, TopExtractedNumbersService>();
             services.AddSingleton<IExtractionAdapter, ExtractiondAdapter>();
             services.AddStackExchangeRedis(configuration);
@@ -38,6 +39,14 @@ namespace GetsBets.Services
            
             services.AddSingleton<IFetchExtractionService, FetchExtractionService>();
             services.AddSingleton<IExtractionEventPublisherService, ExtractionEventPublisherService>();
+            return services;
+        }
+        private static IServiceCollection AddExtractionClientServices(this IServiceCollection services,IConfiguration configuration)
+        {
+            var extractionConfig = ExtractionClientConfiguration.GetFromConfiguration(configuration);
+            services.AddSingleton<IExtractionClientConfiguration>(extractionConfig);
+            services.AddSingleton<IExtractionClientFactory, ExtractionClientFactory>();
+            services.AddSingleton<INumberPrepareService, NumberPrepareService>();
             return services;
         }
     }

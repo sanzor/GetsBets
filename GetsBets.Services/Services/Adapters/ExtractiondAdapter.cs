@@ -42,10 +42,10 @@ namespace GetsBets.Services
         {
             return new Extraction
             {
-                ExtractionDate = extraction.ExtractionDate,
-                ExtractionTime = extraction.ExtractionTime,
+                ExtractionDate =DateOnly.Parse(extraction.Data_Extragere),
+                ExtractionTime =TimeOnly.Parse(extraction.Ora_Extragere),
                 Bonus = extraction.Bonus,
-                Numbers = extraction.Numbers,
+                Numbers = extraction.Numere,
             };
         }
         private AggregatedExtraction ParseExtraction(Extraction extraction)
@@ -57,10 +57,12 @@ namespace GetsBets.Services
             int minute = extraction.ExtractionTime.Minute;
             int second = extraction.ExtractionTime.Second;
             int milisecond = extraction.ExtractionTime.Millisecond;
+            var date = new DateTime(year, month, day, hour, minute, second, milisecond);
             return new AggregatedExtraction
             {
-                Numbers=extraction.Numbers,
-                ExtractionTime = new DateTime(year, month, day, hour, minute, second, milisecond)
+                Date = $"{date.Year}-{date.Month}-{date.Day} {date.Hour}:{date.Minute}:{date.Second}",
+                Numbers =extraction.Numbers
+               
             };
         }
       
