@@ -8,6 +8,6 @@ namespace GetsBets.Models
 {
     public class ExtractionEvent
     {
-       public Extraction Extraction { get; set; }
+       public List<Extraction> Extractions { get; set; }
     }
 }

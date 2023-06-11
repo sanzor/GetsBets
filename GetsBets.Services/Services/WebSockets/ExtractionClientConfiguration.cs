@@ -18,7 +18,7 @@ namespace GetsBets.Services
         public static ExtractionClientConfiguration GetFromConfiguration(IConfiguration configuration)
         {
             var throttle = configuration.GetSection("extractionClient:throttleMilliseconds").Get<int>();
-            var sendNumberAfterSeconds = configuration.GetSection("extractionClient:sendNumberAfterSeconds").Get<int>();
+            var sendNumberAfterSeconds = configuration.GetSection("extractionClient:sendNumbersAfterSeconds").Get<int>();
             return new ExtractionClientConfiguration { ThrottleMilliseconds= throttle, SendNumberAfterSeconds= sendNumberAfterSeconds };
 
 

@@ -18,7 +18,7 @@ builder.Services.AddValidators();
 builder.Services.AddHealthChecks()
     .AddCheck<ConfigCheck>("config");
 
-//builder.Services.AddHostedService<ExtractionDaemon>();
+builder.Services.AddHostedService<ExtractionDaemon>();
 builder.Services.AddHttpClient();
 
 var app = builder.Build();

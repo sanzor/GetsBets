@@ -27,23 +27,29 @@ namespace GetsBets.Services
             {
                 return;
             }
-            await TryAsync(async () =>
+            using (var socket = await context.WebSockets.AcceptWebSocketAsync())
             {
-                using (var socket = await context.WebSockets.AcceptWebSocketAsync())
-                {
-                    var loopingClient = await
-                          this.factory.CreateExtractionClient(socket)
-                         .ToAsync()
-                         .Bind(client => client.RunAsync())
-                         .Match(ok =>
-                         {
-                             logger.Information("Socket client finished normally");
-                         }, err =>
-                         {
-                             logger.Error($"Socket client finished with error: {err.Message}");
-                         });
-                }
-            });
+                var loopingClient = await
+                      this.factory.CreateExtractionClient(socket)
+                     .ToAsync()
+                     .Bind(client => client.RunAsync())
+                     .Match(ok =>
+                     {
+                         logger.Information("Socket client finished normally");
+                     }, err =>
+                     {
+                         logger.Error($"Socket client finished with error: {err.Message}");
+                     });
+            }
+            //var rez=await TryAsync(async () =>
+            //{
+               
+            //}).ToEither(err =>
+            //{
+            //    logger.Error($"Websocket connection ended with error:{err.Message}");
+            //    return err;
+            //});
+            //;
            
         }
     }

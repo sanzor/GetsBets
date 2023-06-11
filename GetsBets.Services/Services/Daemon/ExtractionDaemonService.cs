@@ -1,4 +1,5 @@
 ﻿using GetsBets.DataAccess.Contracts;
+using GetsBets.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,11 @@ namespace GetsBets.Services
         private readonly IExtractionAdapter _extractionAdapter;
         private readonly IExtractionDataService _extractionService;
         private readonly ILogger _logger = Log.ForContext<ExtractionDaemonService>();
+        private readonly IBroadcastService<ExtractionEvent> _broadcastService;
+        private readonly string _extractionChannel;
         public EitherAsync<Error, Unit> InsertWinnersAsync()
         {
-            var result= _fetchExtractionService
+            var result = _fetchExtractionService
                  .GetExtractionFromSourceAsync()
                  .Bind(rawExtractions =>
                  {
@@ -25,30 +28,54 @@ namespace GetsBets.Services
                      .ToAsync();
                      return extractions;
                  })
-                 .Bind(_extractionService.InsertExtractionsAsync)
-                 .Map(ok=>Unit.Default)
+                 //.Bind(exc =>
+                 //{
+                 //    var date = DateTime.UtcNow;
+                 //    var today = new DateOnly(date.Year, date.Month, date.Day);
+                 //    var result = _extractionService
+                 //    .GetExtractionsWithDateFilterAsync(today)
+                 //    .Map(existingForToday =>
+                 //    {
+                 //        List<Extraction> resulting = new List<Extraction>();
+                 //        foreach (var item in exc)
+                 //        {
+                 //            if(existingForToday.Any(x=>x.Expec)
+                 //        }
+                 //    });
+
+                 //})
+                 .Bind(ls => _extractionService.InsertExtractionsAsync(ls).Map(unit => ls))
+                 .Bind(ok =>
+                 {
+                     var @event = new ExtractionEvent
+                     {
+                         Extractions = ok
+                     };
+                     return _broadcastService.PublishMessageAsync(_extractionChannel, @event);
+                 })
                  .MapLeft(err =>
                  {
                      _logger.Error($"Error in Daemon Service : {err.Message}");
                      return err;
                  });
             return result;
-                
-               
+
+
         }
-        public ExtractionDaemonService(IFetchExtractionService fetchExtractionService)
-        {
-            _fetchExtractionService = fetchExtractionService;
-        }
+
         public ExtractionDaemonService(IFetchExtractionService fetchExtractionService,
             IExtractionAdapter adapter,
-            IExtractionDataService extractionService)
+            IExtractionDataService extractionService,
+            IBroadcastService<ExtractionEvent> broadcastService,
+            IRedisConfiguration redisConfiguration)
         {
-            this._extractionAdapter = adapter;
-            this._fetchExtractionService = fetchExtractionService;
-            this._extractionService = extractionService;
+            this._extractionAdapter = adapter ?? throw new ArgumentNullException(nameof(adapter));
+            this._fetchExtractionService = fetchExtractionService ?? throw new ArgumentNullException(nameof(fetchExtractionService));
+            this._extractionService = extractionService ?? throw new ArgumentNullException(nameof(extractionService));
+            this._broadcastService = broadcastService ?? throw new ArgumentNullException(nameof(broadcastService));
+            this._extractionChannel = redisConfiguration.ExtractionChannel;
         }
     }
 
-    
+
 }

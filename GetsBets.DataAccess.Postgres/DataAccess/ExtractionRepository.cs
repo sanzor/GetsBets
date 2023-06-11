@@ -18,6 +18,15 @@ namespace GetsBets.DataAccess.Postgres
         private const string INSERT_PROCEDURE = "insert";
         private const string GET_EXTRACTIONS_FOR_DATE_PROCEDURE = "get_extractions_for_date";
         private const string GET_TOP_EXTRACTED_NUMBERS_FOR_DATE = "get_top_extracted_numbers_for_date";
+        private const string INSERT_QUERY = @"INSERT INTO public.extraction (data_extragere, ora_extragere, numere, bonus)
+          SELECT @date, @time, @numbers, @bonus
+          WHERE NOT EXISTS (
+              SELECT 1 FROM public.extraction
+              WHERE data_extragere = @date
+                AND ora_extragere = @time
+                AND numere = @numbers
+                AND bonus = @bonus";
+        private const string SIMPLE_INSERT = "COPY public.extragere (data_extragere,ora_extragere,numere,bonus) FROM STDIN (FORMAT BINARY)";
 
         public EitherAsync<Error, Unit> InsertExtractionsAsync(List<Extraction> extractions)
         {
@@ -26,9 +35,9 @@ namespace GetsBets.DataAccess.Postgres
 
                 using NpgsqlConnection connection = databaseConnector.GetNpgSqlConnection();
                 await connection.OpenAsync();
-                using var writer = await connection.BeginBinaryImportAsync("COPY public.extragere (data_extragere,ora_extragere,numere,bonus) FROM STDIN (FORMAT BINARY)");
-                using var command = new NpgsqlCommand(INSERT_PROCEDURE, connection);
-                command.CommandType = CommandType.StoredProcedure;
+                using var writer = await connection.BeginBinaryImportAsync(SIMPLE_INSERT);
+                //using var command = new NpgsqlCommand(INSERT_PROCEDURE, connection);
+                //command.CommandType = CommandType.StoredProcedure;
                 foreach (var item in extractions)
                 {
                     await writer.StartRowAsync();

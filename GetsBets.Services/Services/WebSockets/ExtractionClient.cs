@@ -31,15 +31,22 @@ namespace GetsBets.Services
                     ExtractionEvent extractionEvent = JsonConvert.DeserializeObject<ExtractionEvent>(item);
                     Task.Run(() => ProcessMessageAsync(extractionEvent));
                 }
-
+                await CleanupSessionAsync();
                 return Unit.Default;
-            }).ToEither();
+            }).ToEither()
+            .MapLeftAsync(async err =>
+            {
+                await CleanupSessionAsync();
+                return err;
+            });
             return loop;
+            
 
         }
         private EitherAsync<Error, Unit> ProcessMessageAsync(ExtractionEvent @event)
         {
-            return _numberPrepareService.PrepareRandomizedNumbers(@event.Extraction.Numbers)
+            var first = @event.Extractions.Last();
+            return _numberPrepareService.PrepareRandomizedNumbers(first.Numbers)
                 .ToAsync()
                 .Bind(RunSendNumbersLoop);
         }
@@ -53,6 +60,7 @@ namespace GetsBets.Services
 
                 while (true)
                 {
+
                     if (queue.Count == 0)
                     {
                         return Unit.Default;
@@ -62,17 +70,14 @@ namespace GetsBets.Services
                         var number = queue.Dequeue();
                         var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(number));
                         await _webSocket.SendAsync(bytes, WebSocketMessageType.Text, true, CancellationToken.None);
+                        previous = now;
                     }
                     await Task.Delay(_clientConfiguration.ThrottleMilliseconds);
+                    now = DateTime.UtcNow;
                 }
 
             })
-                .ToEither()
-                .MapAsync(async ok =>
-                {
-                    await CleanupSessionAsync();
-                    return ok;
-                });
+                .ToEither();
             return loopResult;
 
         }

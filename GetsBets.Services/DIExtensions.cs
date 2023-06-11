@@ -28,6 +28,7 @@ namespace GetsBets.Services
         {
             var redisconfiguration = RedisConfiguration.GetFromConfiguration(configuration);
             services.AddSingleton<IRedisConfiguration>(redisconfiguration);
+            services.AddSingleton<IBroadcastService<ExtractionEvent>,BroadcastService<ExtractionEvent>>();
             services.AddSingleton<IConnectionMultiplexer>(sp => ConnectionMultiplexer.Connect(redisconfiguration.ConnectionString));
             return services;
         }
