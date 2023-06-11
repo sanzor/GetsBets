@@ -106,7 +106,7 @@ namespace GetsBets.DataAccess.Postgres
                 command.CommandType = System.Data.CommandType.StoredProcedure;
 
                 command.Parameters.AddWithValue("@top_count", NpgsqlDbType.Integer, topExtractedParams.TopMostExtractedNumbersCount);
-                command.Parameters.AddWithValue("@least_count", NpgsqlDbType.Integer, topExtractedParams.TopLeastExtractedNumbersCount); ;
+                command.Parameters.AddWithValue("@least_count", NpgsqlDbType.Integer, topExtractedParams.TopLeastExtractedNumbersCount);
                 command.Parameters.AddWithValue("@date", NpgsqlDbType.Date, topExtractedParams.Date);
 
                 var reader = await command.ExecuteReaderAsync();

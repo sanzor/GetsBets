@@ -17,7 +17,6 @@ namespace GetsBets.Services
         private readonly INumberPrepareService _numberPrepareService;
         private readonly IExtractionClientConfiguration _clientConfiguration;
         private readonly BlockingCollection<string> _outboundQueue = new BlockingCollection<string>();
-        private readonly ConcurrentQueue<string> _numberQueue = new ConcurrentQueue<string>();
         private readonly WebSocket _webSocket;
 
 
@@ -82,14 +81,14 @@ namespace GetsBets.Services
             ISubscriber subscriber,
             IRedisConfiguration config,
             INumberPrepareService numberPrepareService,
-            IExtractionClientConfiguration _clientConfiguration)
+            IExtractionClientConfiguration clientConfiguration)
         {
             _webSocket = websocket ?? throw new ArgumentNullException(nameof(websocket));
             this._subscriber = subscriber ?? throw new ArgumentNullException(nameof(subscriber));
             this._numberPrepareService = numberPrepareService ?? throw new ArgumentNullException(nameof(numberPrepareService));
             this.RedisChannel = config.ExtractionChannel ?? throw new ArgumentNullException(nameof(config.ExtractionChannel));
-            _clientConfiguration = _clientConfiguration ??
-                throw new ArgumentNullException(nameof(_clientConfiguration));
+            _clientConfiguration = clientConfiguration ??
+                throw new ArgumentNullException(nameof(clientConfiguration));
         }
         private Action<RedisChannel, RedisValue> onRedisMessageHandler = null;
         public Action<RedisChannel, RedisValue> OnRedisMessageHandler

@@ -78,7 +78,7 @@ namespace GetsBets
                 .Adapt(dto)
                 .ToAsync()
 
-            .Bind(_extractionService.GetTopExtractedNumbersForDateAsync)
+            .Bind(_extractionService.GetTopExtractedNumbersForDateAsync2)
             .Match(ok =>
             {
                 return StatusCode(200, ok);
