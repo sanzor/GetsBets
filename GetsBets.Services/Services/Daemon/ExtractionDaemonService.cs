@@ -28,22 +28,6 @@ namespace GetsBets.Services
                      .ToAsync();
                      return extractions;
                  })
-                 //.Bind(exc =>
-                 //{
-                 //    var date = DateTime.UtcNow;
-                 //    var today = new DateOnly(date.Year, date.Month, date.Day);
-                 //    var result = _extractionService
-                 //    .GetExtractionsWithDateFilterAsync(today)
-                 //    .Map(existingForToday =>
-                 //    {
-                 //        List<Extraction> resulting = new List<Extraction>();
-                 //        foreach (var item in exc)
-                 //        {
-                 //            if(existingForToday.Any(x=>x.Expec)
-                 //        }
-                 //    });
-
-                 //})
                  .Bind(ls => _extractionService.InsertExtractionsAsync(ls).Map(unit => ls))
                  .Bind(ok =>
                  {

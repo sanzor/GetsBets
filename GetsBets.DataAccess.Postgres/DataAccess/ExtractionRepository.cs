@@ -40,11 +40,25 @@ namespace GetsBets.DataAccess.Postgres
                 //command.CommandType = CommandType.StoredProcedure;
                 foreach (var item in extractions)
                 {
-                    await writer.StartRowAsync();
-                    await writer.WriteAsync(item.ExtractionDate, NpgsqlDbType.Date);
-                    await writer.WriteAsync(item.ExtractionTime, NpgsqlDbType.Time);
-                    await writer.WriteAsync(item.Numbers, NpgsqlDbType.Text);
-                    await writer.WriteAsync(item.Bonus, NpgsqlDbType.Text);
+                    try
+                    {
+                        await writer.StartRowAsync();
+                        await writer.WriteAsync(item.ExtractionDate, NpgsqlDbType.Date);
+                        await writer.WriteAsync(item.ExtractionTime, NpgsqlDbType.Time);
+                        await writer.WriteAsync(item.Numbers, NpgsqlDbType.Text);
+                        await writer.WriteAsync(item.Bonus, NpgsqlDbType.Text);
+                    }
+                    catch (PostgresException exc)
+                    {
+                        if (exc.SqlState == "23505")
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
                 }
                 await writer.CompleteAsync();
                 return Unit.Default;
