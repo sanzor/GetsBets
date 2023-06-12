@@ -25,7 +25,7 @@ namespace GetsBets.Services
             List<SendNumber> sendNumbers = new List<SendNumber>();
             foreach (var item in numbers.Split(','))
             {
-                sendNumbers.Add(new SendNumber { Position = position++, Value = item });
+                sendNumbers.Add(new SendNumber { Id = position++, Value = item });
             }
             return sendNumbers;
 

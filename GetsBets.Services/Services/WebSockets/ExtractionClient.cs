@@ -68,6 +68,7 @@ namespace GetsBets.Services
                     if (now - previous > TimeSpan.FromSeconds(_clientConfiguration.SendNumberAfterSeconds))
                     {
                         var number = queue.Dequeue();
+                        number.Time = new TimeOnly(now.Hour,now.Minute,now.Second);
                         var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(number));
                         await _webSocket.SendAsync(bytes, WebSocketMessageType.Text, true, CancellationToken.None);
                         previous = now;

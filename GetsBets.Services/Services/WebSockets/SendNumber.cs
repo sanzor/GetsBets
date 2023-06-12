@@ -8,7 +8,8 @@ namespace GetsBets.Services
 {
     internal class SendNumber
     {
-        public int Position { get; set; }
+        public TimeOnly Time { get; set; }
+        public int Id { get; set; }
         public string Value { get; set; }
     }
 }
