@@ -5,15 +5,20 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GetsBets", "GetsBets\GetsBets.csproj", "{E2D8A92A-6D45-49EA-93F0-740B321D2A19}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetsBets.Services", "GetsBets.Services\GetsBets.Services.csproj", "{04F73BC7-BC6C-4066-99B5-6B97D1CD47E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GetsBets.Services", "GetsBets.Services\GetsBets.Services.csproj", "{04F73BC7-BC6C-4066-99B5-6B97D1CD47E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetsBets.Models", "GetsBets.Models\GetsBets.Models.csproj", "{C2FEF7C3-EBC6-4EA6-8ECF-1775926A196D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GetsBets.Models", "GetsBets.Models\GetsBets.Models.csproj", "{C2FEF7C3-EBC6-4EA6-8ECF-1775926A196D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetsBets.DataAccess.Postgres", "GetsBets.DataAccess.Postgres\GetsBets.DataAccess.Postgres.csproj", "{0FCCF036-FB92-48B2-8AC5-E161B8BBA046}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GetsBets.DataAccess.Postgres", "GetsBets.DataAccess.Postgres\GetsBets.DataAccess.Postgres.csproj", "{0FCCF036-FB92-48B2-8AC5-E161B8BBA046}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetsBets.DataAccess.Contracts", "GetsBets.DataAccess.Contracts\GetsBets.DataAccess.Contracts.csproj", "{08FA5855-085F-4AE3-AA6B-6EFC3D202A15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GetsBets.DataAccess.Contracts", "GetsBets.DataAccess.Contracts\GetsBets.DataAccess.Contracts.csproj", "{08FA5855-085F-4AE3-AA6B-6EFC3D202A15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetsBets.DataAccess.Common", "GetsBets.DataAccess.Common\GetsBets.DataAccess.Common.csproj", "{FCEED389-AB00-432E-A339-75DD16906989}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GetsBets.DataAccess.Common", "GetsBets.DataAccess.Common\GetsBets.DataAccess.Common.csproj", "{FCEED389-AB00-432E-A339-75DD16906989}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C36C183F-831B-418F-8D9B-7EC146509325}"
+	ProjectSection(SolutionItems) = preProject
+		table_script.sql = table_script.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
