@@ -14,6 +14,7 @@ namespace GetsBets.DataAccess.Postgres
 
     public class ExtractionRepository : IExtractionRepository
     {
+        
         public readonly IDatabaseConnector databaseConnector;
         private const string INSERT_PROCEDURE = "insert";
         private const string GET_EXTRACTIONS_FOR_DATE_PROCEDURE = "get_extractions_for_date";
@@ -48,12 +49,13 @@ namespace GetsBets.DataAccess.Postgres
                         await writer.WriteAsync(item.Numbers, NpgsqlDbType.Text);
                         await writer.WriteAsync(item.Bonus, NpgsqlDbType.Text);
                     }
-                    catch (PostgresException exc)
+                    catch (Exception exc)
                     {
-                        if (exc.SqlState == "23505")
+                        if (exc.Message.Contains("23505"))
                         {
                             continue;
                         }
+                       
                         else
                         {
                             throw;
@@ -62,7 +64,11 @@ namespace GetsBets.DataAccess.Postgres
                 }
                 await writer.CompleteAsync();
                 return Unit.Default;
-            }).ToEither();
+            }).ToEither(err =>
+            {
+                Console.WriteLine(err.Message);
+                return err;
+            });
             return result;
         }
         private DataTable CreateDataTable(IEnumerable<Extraction> extractions)

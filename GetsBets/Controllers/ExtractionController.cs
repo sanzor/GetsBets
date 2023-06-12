@@ -25,7 +25,7 @@ namespace GetsBets
                 }, err =>
                 {
                     _logger.Error($"Failed manual extraction from source with error:{err.Message}");
-                    return StatusCode(500, $"Manual extraction failed with reason {err.Message}");
+                    return StatusCode(500, $"Manual extraction failed with reason: {err.Message}");
                 });
             return rez;
         }
