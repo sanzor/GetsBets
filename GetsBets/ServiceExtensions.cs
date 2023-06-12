@@ -11,6 +11,7 @@ namespace GetsBets
         {
             services.AddCoreServices(config);
             services.AddDataAccess(config);
+            services.AddValidators();
             return services;
 
         }
